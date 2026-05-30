@@ -2,9 +2,9 @@ import logging
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes    import analyze, threats, dashboard, monitor, credentials, alerts
+from app.api.routes import analyze, threats, dashboard, monitor, credentials, alerts
 from app.api.websocket import ws_manager
-from app.db.mongodb    import connect_db, close_db
+from app.db.mongodb import connect_db, close_db
 from app.db.redis_client import connect_redis
 from app.tasks.scheduler import start_scheduler, stop_scheduler
 
@@ -24,19 +24,21 @@ app = FastAPI(
 # ── CORS: allow the Next.js frontend ────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # tighten to your domain in production
+    allow_origins=["*"],  # tighten to your domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ── Routes ───────────────────────────────────────────────────────
-app.include_router(analyze.router,     prefix="/api/v1/analyze",     tags=["Analysis"])
-app.include_router(threats.router,     prefix="/api/v1/threats",     tags=["Threats"])
-app.include_router(dashboard.router,   prefix="/api/v1/dashboard",   tags=["Dashboard"])
-app.include_router(monitor.router,     prefix="/api/v1/monitor",     tags=["Monitor"])
-app.include_router(credentials.router, prefix="/api/v1/credentials", tags=["Credentials"])
-app.include_router(alerts.router,      prefix="/api/v1/alerts",      tags=["Alerts"])
+app.include_router(analyze.router, prefix="/api/v1/analyze", tags=["Analysis"])
+app.include_router(threats.router, prefix="/api/v1/threats", tags=["Threats"])
+app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["Dashboard"])
+app.include_router(monitor.router, prefix="/api/v1/monitor", tags=["Monitor"])
+app.include_router(
+    credentials.router, prefix="/api/v1/credentials", tags=["Credentials"]
+)
+app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["Alerts"])
 
 
 # ── WebSocket ─────────────────────────────────────────────────────
@@ -48,16 +50,12 @@ async def threat_ws(websocket: WebSocket):
 # ── Lifecycle ────────────────────────────────────────────────────
 @app.on_event("startup")
 async def startup():
-    print("\n" + "="*55)
-    print("  🛡️  CyberSentinel API Starting...")
-    print("="*55 + "\n")
-    await connect_db()
-    await connect_redis()
+    try:
+        await connect_db()
+    except Exception as e:
+        print("MongoDB startup error:", e)
+
     await start_scheduler()
-    print("\n" + "="*55)
-    print("  ✅  CyberSentinel is LIVE")
-    print("  📖  API Docs → http://localhost:8000/api/docs")
-    print("="*55 + "\n")
 
 
 @app.on_event("shutdown")
