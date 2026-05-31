@@ -8,15 +8,15 @@ import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import type { Threat } from "@/types/threats";
 
 const SEVERITY_FILTERS = ["all", "critical", "high", "medium", "low"];
-const TYPE_FILTERS     = ["all", "phishing", "malware", "credential_leak", "data_breach", "scam"];
+const TYPE_FILTERS = ["all", "phishing", "malware", "credential_leak", "data_breach", "scam"];
 
 export default function ThreatsPage() {
-  const [threats, setThreats]         = useState<Threat[]>([]);
-  const [loading, setLoading]         = useState(true);
-  const [page, setPage]               = useState(1);
-  const [totalPages, setTotalPages]   = useState(1);
-  const [severity, setSeverity]       = useState("all");
-  const [type, setType]               = useState("all");
+  const [threats, setThreats] = useState<Threat[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [severity, setSeverity] = useState("all");
+  const [type, setType] = useState("all");
 
   useEffect(() => {
     (async () => {
@@ -24,7 +24,7 @@ export default function ThreatsPage() {
       try {
         const params: any = { page, limit: 20 };
         if (severity !== "all") params.severity = severity;
-        if (type !== "all")     params.type = type;
+        if (type !== "all") params.type = type;
         const res = await getThreats(params);
         setThreats(res.data ?? []);
         setTotalPages(res.pages ?? 1);
@@ -56,11 +56,10 @@ export default function ThreatsPage() {
               <button
                 key={f}
                 onClick={() => { setSeverity(f); setPage(1); }}
-                className={`text-xs font-mono px-2 py-1 rounded transition-all ${
-                  severity === f
+                className={`text-xs font-mono px-2 py-1 rounded transition-all ${severity === f
                     ? "bg-neon-blue/20 border border-neon-blue/40 text-neon-blue"
                     : "text-slate-muted hover:text-slate-secondary"
-                }`}
+                  }`}
               >
                 {f.toUpperCase()}
               </button>
@@ -72,11 +71,10 @@ export default function ThreatsPage() {
               <button
                 key={f}
                 onClick={() => { setType(f); setPage(1); }}
-                className={`text-xs font-mono px-2 py-1 rounded transition-all ${
-                  type === f
+                className={`text-xs font-mono px-2 py-1 rounded transition-all ${type === f
                     ? "bg-neon-purple/20 border border-neon-purple/40 text-neon-purple"
                     : "text-slate-muted hover:text-slate-secondary"
-                }`}
+                  }`}
               >
                 {f.replace("_", " ").toUpperCase()}
               </button>
@@ -135,55 +133,57 @@ function ThreatRow({ threat }: { threat: Threat }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <GlowCard className="p-4 cursor-pointer" onClick={() => setExpanded((e) => !e)}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <SeverityBadge severity={threat.severity} pulse={threat.severity === "critical"} />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-primary truncate">{threat.title}</p>
-            <p className="text-xs text-slate-secondary mt-1 line-clamp-1">{threat.summary}</p>
+    <div onClick={() => setExpanded((e) => !e)}>
+      <GlowCard className="p-4 cursor-pointer">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <SeverityBadge severity={threat.severity} pulse={threat.severity === "critical"} />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-slate-primary truncate">{threat.title}</p>
+              <p className="text-xs text-slate-secondary mt-1 line-clamp-1">{threat.summary}</p>
+            </div>
+          </div>
+          <div className="text-right shrink-0">
+            <div className="text-xs font-mono text-slate-muted">{formatTimeAgo(threat.detected_at)}</div>
+            <div className="text-xs font-mono text-neon-blue mt-1">
+              {threat.risk_score}/100
+            </div>
           </div>
         </div>
-        <div className="text-right shrink-0">
-          <div className="text-xs font-mono text-slate-muted">{formatTimeAgo(threat.detected_at)}</div>
-          <div className="text-xs font-mono text-neon-blue mt-1">
-            {threat.risk_score}/100
-          </div>
-        </div>
-      </div>
 
-      {expanded && (
-        <div className="mt-4 pt-4 border-t border-neon-blue/10 space-y-3 animate-slide-in">
-          <div className="grid grid-cols-2 gap-4 text-xs font-mono">
-            <div>
-              <span className="text-slate-muted">TYPE: </span>
-              <span className="text-neon-blue">{threat.type?.replace("_", " ").toUpperCase()}</span>
-            </div>
-            <div>
-              <span className="text-slate-muted">STATUS: </span>
-              <span className="text-neon-green">{(threat.status ?? "active").toUpperCase()}</span>
-            </div>
-          </div>
-          {threat.indicators && (
-            <div>
-              <p className="text-xs font-mono text-slate-muted mb-1">INDICATORS:</p>
-              <div className="flex flex-wrap gap-2">
-                {[...(threat.indicators.domains ?? []), ...(threat.indicators.ips ?? [])].map(
-                  (ind) => (
-                    <span
-                      key={ind}
-                      className="text-xs font-mono bg-elevated border border-neon-blue/20 text-neon-blue px-2 py-0.5 rounded"
-                    >
-                      {ind}
-                    </span>
-                  )
-                )}
+        {expanded && (
+          <div className="mt-4 pt-4 border-t border-neon-blue/10 space-y-3 animate-slide-in">
+            <div className="grid grid-cols-2 gap-4 text-xs font-mono">
+              <div>
+                <span className="text-slate-muted">TYPE: </span>
+                <span className="text-neon-blue">{threat.type?.replace("_", " ").toUpperCase()}</span>
+              </div>
+              <div>
+                <span className="text-slate-muted">STATUS: </span>
+                <span className="text-neon-green">{(threat.status ?? "active").toUpperCase()}</span>
               </div>
             </div>
-          )}
-        </div>
-      )}
-    </GlowCard>
+            {threat.indicators && (
+              <div>
+                <p className="text-xs font-mono text-slate-muted mb-1">INDICATORS:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[...(threat.indicators.domains ?? []), ...(threat.indicators.ips ?? [])].map(
+                    (ind) => (
+                      <span
+                        key={ind}
+                        className="text-xs font-mono bg-elevated border border-neon-blue/20 text-neon-blue px-2 py-0.5 rounded"
+                      >
+                        {ind}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </GlowCard>
+    </div>
   );
 }
 
