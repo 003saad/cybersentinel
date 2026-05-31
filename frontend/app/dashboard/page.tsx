@@ -19,7 +19,7 @@ function StatCard({ label, value, delta, color, icon: Icon, pulse = false }: any
   };
   const [textColor, borderColor] = (colorMap[color] ?? "text-neon-blue border-neon-blue/20").split(" ");
   return (
-    <GlowCard glowColor={color}>
+    <GlowCard>
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-mono text-slate-secondary uppercase tracking-wider">{label}</p>
