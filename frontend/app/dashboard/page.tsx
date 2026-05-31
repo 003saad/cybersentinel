@@ -12,10 +12,10 @@ import type { DashboardStats, Threat } from "@/types/threats";
 /* ── Stat Card ─────────────────────────────────────────── */
 function StatCard({ label, value, delta, color, icon: Icon, pulse = false }: any) {
   const colorMap: Record<string, string> = {
-    blue:   "text-neon-blue   border-neon-blue/20",
-    red:    "text-neon-red    border-neon-red/20",
+    blue: "text-neon-blue   border-neon-blue/20",
+    red: "text-neon-red    border-neon-red/20",
     orange: "text-neon-orange border-neon-orange/20",
-    green:  "text-neon-green  border-neon-green/20",
+    green: "text-neon-green  border-neon-green/20",
   };
   const [textColor, borderColor] = (colorMap[color] ?? "text-neon-blue border-neon-blue/20").split(" ");
   return (
@@ -44,9 +44,9 @@ function ThreatFeedItem({ threat }: { threat: Threat }) {
   const sev = threat.severity ?? "low";
   const leftBorder: Record<string, string> = {
     critical: "border-l-neon-red",
-    high:     "border-l-neon-orange",
-    medium:   "border-l-yellow-500",
-    low:      "border-l-neon-blue",
+    high: "border-l-neon-orange",
+    medium: "border-l-yellow-500",
+    low: "border-l-neon-blue",
   };
   return (
     <div
@@ -108,7 +108,7 @@ export default function DashboardPage() {
         setStats((prev) => ({ ...prev, threats_today: (prev.threats_today ?? 0) + 1 }));
       }
     },
-    onError: () => {/* silent — WS reconnects automatically */},
+    onError: () => {/* silent — WS reconnects automatically */ },
   });
 
   const chartData = [
@@ -118,7 +118,7 @@ export default function DashboardPage() {
     { time: "12:00", threats: 8 },
     { time: "16:00", threats: 15 },
     { time: "20:00", threats: 7 },
-    { time: "Now",   threats: stats.threats_today ?? 4 },
+    { time: "Now", threats: stats.threats_today ?? 4 },
   ];
 
   if (loading) {
@@ -143,10 +143,10 @@ export default function DashboardPage() {
 
       {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Threats Today"  value={stats.threats_today}   delta="+12" color="blue"   icon={Shield} />
-        <StatCard label="Critical"        value={stats.critical_count}  delta="NEW" color="red"    icon={AlertTriangle} pulse={stats.critical_count > 0} />
-        <StatCard label="High Severity"   value={stats.high_count}      delta="+3"  color="orange" icon={Zap} />
-        <StatCard label="Scans Performed" value={stats.scans_performed} delta="+5"  color="green"  icon={Activity} />
+        <StatCard label="Threats Today" value={stats.threats_today} delta="+12" color="blue" icon={Shield} />
+        <StatCard label="Critical" value={stats.critical_count} delta="NEW" color="red" icon={AlertTriangle} pulse={stats.critical_count > 0} />
+        <StatCard label="High Severity" value={stats.high_count} delta="+3" color="orange" icon={Zap} />
+        <StatCard label="Scans Performed" value={stats.scans_performed} delta="+5" color="green" icon={Activity} />
       </div>
 
       {/* Feed + Risk meter */}
@@ -185,15 +185,15 @@ export default function DashboardPage() {
               {(stats.critical_count ?? 0) > 0
                 ? "⚠ ELEVATED"
                 : (stats.high_count ?? 0) > 0
-                ? "⚠ GUARDED"
-                : "✓ NORMAL"}
+                  ? "⚠ GUARDED"
+                  : "✓ NORMAL"}
             </div>
           </div>
           <div className="mt-4 space-y-2">
             {[
-              { label: "Phishing", value: Math.floor((stats.threats_today ?? 0) * 0.5), color: "neon-red"    },
-              { label: "Malware",  value: Math.floor((stats.threats_today ?? 0) * 0.3), color: "neon-orange" },
-              { label: "Leaks",    value: Math.floor((stats.threats_today ?? 0) * 0.2), color: "neon-blue"   },
+              { label: "Phishing", value: Math.floor((stats.threats_today ?? 0) * 0.5), color: "neon-red" },
+              { label: "Malware", value: Math.floor((stats.threats_today ?? 0) * 0.3), color: "neon-orange" },
+              { label: "Leaks", value: Math.floor((stats.threats_today ?? 0) * 0.2), color: "neon-blue" },
             ].map(({ label, value, color }) => (
               <div key={label} className="flex items-center justify-between text-xs">
                 <span className="text-slate-secondary font-mono">{label}</span>
